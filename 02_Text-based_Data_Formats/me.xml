@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<me>
+    <name>Tobias</name>
+    <age>24</age>
+
+    <hobbies>
+        <hobby>Fodbold</hobby>
+        <hobby>Sove</hobby>
+        <hobby>Spise</hobby>
+    </hobbies>
+
+</me>

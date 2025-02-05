@@ -1,0 +1,3 @@
+Name: Spiderman
+Age: 17
+Location: New York
