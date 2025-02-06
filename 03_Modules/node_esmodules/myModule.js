@@ -4,4 +4,6 @@ class ClassA {
     }
 }
 
-module.exports = ClassA
+//Husk at bruge es6 ift chatGPT
+
+export default ClassA;

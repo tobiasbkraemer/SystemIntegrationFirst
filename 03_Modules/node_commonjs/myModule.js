@@ -4,4 +4,4 @@ class ClassA {
     }
 }
 
-module.exports = ClassA
+export default ClassA;
