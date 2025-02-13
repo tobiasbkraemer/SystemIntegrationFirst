@@ -47,7 +47,6 @@ def parse_csv(file_path):
         return [row for row in reader]
 
 # File paths
-# Correct file paths to point to the `data/` folder
 files = {
     "txt": os.path.join(BASE_DIR, "data", "data.txt"),
     "json": os.path.join(BASE_DIR, "data", "data.json"),

@@ -1,0 +1,12 @@
+<users>
+    <user>
+        <name>Spiderman</name>
+        <age>17</age>
+        <location>New York</location>
+    </user>
+    <user>
+        <name>Moon Knight</name>
+        <age>25</age>
+        <location>London</location>
+    </user>
+</users>
