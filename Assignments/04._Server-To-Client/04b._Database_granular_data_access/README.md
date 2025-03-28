@@ -10,14 +10,6 @@ This document contains all necessary information for the **Integrator** to conne
 - **Database Name**: `granular_access`
 - **Authentication**: Role-based access with Row-Level Security (RLS)
 
----
-
-##  Connection Info
-
-### Host Environment
-
-- **Host**: `localhost`
-- **Port**: `5432`
 
 ### Roles and Credentials
 
@@ -27,20 +19,6 @@ This document contains all necessary information for the **Integrator** to conne
 | `reader_user` | `reader123`  | Can only read rows with `category = 'public'`            |
 | `writer_user` | `writer123`  | Can read/write own rows (owner = current_user)          |
 | `admin_user`  | `admin123`   | Full access to all data (SELECT, INSERT, DELETE, etc.)  |
-
-### Example CLI Connection Commands (from host):
-
-```bash
-psql -U reader_user -d granular_access -h localhost -W
-psql -U writer_user -d granular_access -h localhost -W
-psql -U admin_user  -d granular_access -h localhost -W
-```
-
-If using Windows:
-
-```powershell
-"C:\Program Files\PostgreSQL\17\bin\psql.exe" -U reader_user -d granular_access -h localhost
-```
 
 ---
 
@@ -84,7 +62,7 @@ INSERT INTO sensitive_data (category, content, owner) VALUES
 
 ---
 
-## 📸 Expected Behavior
+## Expected Behavior
 
 | Action                       | Reader| Writer| Admin|
 |------------------------------|-------|-------|------|
@@ -125,7 +103,7 @@ This guide will help you connect to the `granular_access` PostgreSQL database an
 
 ---
 
-## 🔌 1. Connect to the database
+## 1. Connect to the database
 
 Replace `MY_IP_ADDRESS` with the IP address of the Exposee.
 
@@ -201,19 +179,5 @@ VALUES ('classified', 'Admin test row', 'admin');
 ```
  Should succeed
 
----
-
-## 📸 5. Take Screenshots
-
-Take screenshots of the following steps as documentation:
-
-- Terminal connections for each user
-- `SELECT` results for each user
-- `INSERT` attempts: both success and failure
-- Any permission denied messages
-
----
-
-This ensures verification of fine-grained access through PostgreSQL Row-Level Security (RLS).
 
 
