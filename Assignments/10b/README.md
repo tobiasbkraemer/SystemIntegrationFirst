@@ -21,3 +21,13 @@ Kopierer data fra sourcedb.users til targetdb.users
 
 Resultat:
 Begge databaser har users-tabellen med 3 brugere efter migrering.
+
+Commandoer:
+docker-compose up -d
+docker-compose dopwn -v
+
+npm install knex pg dotenv  
+
+npm run seed
+
+npm run migrate
