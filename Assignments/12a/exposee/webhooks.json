@@ -1,0 +1,6 @@
+[
+  {
+    "url": "https://18e2-87-49-45-233.ngrok-free.app/webhook",
+    "event": "payment_received"
+  }
+]

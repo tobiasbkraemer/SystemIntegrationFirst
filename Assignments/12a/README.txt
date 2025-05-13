@@ -1,78 +1,137 @@
-12a - Webhook System (Exposee + Integrator)
-===========================================
+12a - Webhook System (Exposee & Integrator Roles)
+=================================================
 
-🔧 Setup Overview
------------------
-This project demonstrates a working webhook system using Node.js and Express.
-It contains two parts:
+Dette dokument forklarer præcist hvordan opgaven 12a er blevet løst, både som **Exposee** og **Integrator**, med alle nødvendige trin og detaljer.
 
-1. **Exposee**: A server that lets clients register webhook endpoints and sends events.
-2. **Integrator**: A client that runs a receiver server to accept webhook POST events.
+--------------------------------------------------------------------------------
+OVERBLIK OVER SYSTEMET
+--------------------------------------------------------------------------------
 
-Folder Structure
--------------------
-12a/
-├── exposee/
-│   └── server.js         # Webhook registration + ping sender
-├── integrator/
-│   └── receiver.js       # Webhook receiver
-└── package.json
+- Vi har to roller i opgaven:
+  1. **Exposee** – tillader registrering af webhooks og sender events ud.
+  2. **Integrator** – registrerer sin webhook og modtager events.
 
-🚀 How to Run It
-----------------
+- Vi bruger:
+  - Node.js og Express til begge roller.
+  - `ngrok` til at eksponere lokale servere til internettet.
+  - JSON som format for webhook payloads.
+  - cURL til at registrere og teste.
 
-1. Install dependencies (only once, in the root folder):
+--------------------------------------------------------------------------------
+SETUP: INSTALLATION OG START
+--------------------------------------------------------------------------------
 
-    npm install express node-fetch
+1. Installer afhængigheder:
+   (Kør i roden)
 
-2. Start the webhook server (Exposee):
+   npm install express node-fetch
 
-    cd exposee
-    node server.js
+2. Start din exposee (webhook-server):
 
-    Output: "Webhook server running on http://localhost:3000"
+   cd exposee
+   node server.js
 
-3. In a new terminal, start the webhook receiver (Integrator):
+   Output: "Webhook server running on http://localhost:3000"
 
-    cd integrator
-    node receiver.js
+3. Start din integrator (webhook-modtager):
 
-    Output: "Receiver listening on http://localhost:3001/webhook"
+   cd integrator
+   node receiver.js
 
-Register a Webhook
-----------------------
-Use curl (Git Bash) to register the webhook:
+   Output: "Receiver listening on http://localhost:3001/webhook"
 
-    curl -X POST http://localhost:3000/register \
-      -H "Content-Type: application/json" \
-      -d '{"url": "http://localhost:3001/webhook", "event": "test"}'
+--------------------------------------------------------------------------------
+NGROK - EKSPONER DIN SERVER
+--------------------------------------------------------------------------------
 
-Response:
+1. Download ngrok og placer `ngrok.exe` i din mappe.
+2. Kør:
 
-    Webhook registered.
+   .\ngrok config add-authtoken <din-token>
 
-Trigger Webhook Event
-------------------------
-Send a ping to all registered webhook endpoints:
+3. Start exposee server:
 
-    curl http://localhost:3000/ping
+   .\ngrok http 3000
 
-Expected output in receiver terminal:
+   → Husk din URL fx: https://abc123.ngrok-free.app
 
-    Received webhook event:
-    {
-      "event": "test",
-      "data": "Test ping payload"
-    }
+4. Start integrator receiver:
 
-Dependencies
----------------
-This solution uses:
-- express
-- node-fetch
+   .\ngrok http 3001
 
-Notes
---------
-- No UI is used — this is all HTTP-based.
-- Webhooks are stored in-memory (you can persist to a file/DB if needed).
-- You can extend this by supporting DELETE /register to remove hooks.
+   → Husk din URL fx: https://xyz456.ngrok-free.app
+
+--------------------------------------------------------------------------------
+ROLLE: SOM EXPOSEE
+--------------------------------------------------------------------------------
+
+1. Din webhook-server (`server.js`) skal understøtte følgende endpoints:
+
+   - `POST /register` – gem webhook (fx i en JSON-fil)
+   - `GET /ping` – sender test payload til ALLE registrerede webhooks
+   - `POST /simulate-payment` – sender "payment_received"-event
+
+2. Register/unregister webhook via cURL (kørt af integrator eller ven):
+
+   curl -X POST https://abc123.ngrok-free.app/register \
+     -H "Content-Type: application/json" \
+     -d '{"url": "https://xyz456.ngrok-free.app/webhook", "event": "payment_received"}'
+
+    curl -X POST https://abc123.ngrok-free.app/unregister \
+     -H "Content-Type: application/json" \
+     -d '{"url": "https://xyz456.ngrok-free.app/webhook", "event": "payment_received"}'
+
+3. Test med ping:
+
+   curl https://abc123.ngrok-free.app/ping
+
+4. Simuler betaling:
+
+   curl -X POST http://localhost:3000/simulate-payment
+
+--------------------------------------------------------------------------------
+ROLLE: SOM INTEGRATOR
+--------------------------------------------------------------------------------
+
+1. Kør din `receiver.js` på port 3001:
+
+   node receiver.js
+
+2. Eksponér via ngrok:
+
+   .\ngrok http 3001 → fx https://xyz456.ngrok-free.app
+
+3. Registrer/unregiser din webhook hos en ven (Exposee):
+
+   curl -X POST https://<vens-ngrok-url>/register \
+     -H "Content-Type: application/json" \
+     -d '{"url": "https://xyz456.ngrok-free.app/webhook", "event": "payment_received"}'
+
+    curl -X POST https://<vens-ngrok-url>/unregister \
+     -H "Content-Type: application/json" \
+     -d '{"url": "https://xyz456.ngrok-free.app/webhook", "event": "payment_received"}'
+
+4. Når ven pinger eller sender "simulate-payment", modtager du:
+
+   Received webhook event:
+   {
+     "event": "payment_received",
+     "data": "..."
+   }
+
+--------------------------------------------------------------------------------
+STORAGE AF WEBHOOKS
+--------------------------------------------------------------------------------
+
+Webhooks gemmes lokalt i en JSON-fil, fx `webhooks.json`.
+
+Format:
+
+[
+  {
+    "url": "https://xyz456.ngrok-free.app/webhook",
+    "event": "payment_received"
+  }
+]
+
+
