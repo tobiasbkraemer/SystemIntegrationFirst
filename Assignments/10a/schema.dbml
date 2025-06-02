@@ -1,0 +1,25 @@
+// schema.dbml
+
+Table users {
+  id int [pk, increment]
+  first_name varchar(255)
+  last_name varchar(255)
+}
+
+Table products {
+  id int [pk, increment]
+  name varchar(255)
+  price numeric(8,2)
+}
+
+Table knex_migrations {
+  id int [pk, increment]
+  name varchar(255)
+  batch int
+  migration_time timestamp
+}
+
+Table knex_migrations_lock {
+  index int [pk]
+  is_locked int
+}
