@@ -19,7 +19,7 @@ Features
 - Logout button
 - Fully frontend-based — no custom backend required
 
-Setup Instructions
+Setup Instructions  
 ------------------
 
 1. Firebase Project Setup
@@ -51,62 +51,8 @@ Setup Instructions
     npm install
     npm run dev
 
-5. Configure Firebase (firebase.js)
------------------------------------
-Paste your config like this:
 
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
 
-const firebaseConfig = {
-  apiKey: '...',
-  authDomain: '...',
-  projectId: '...',
-  storageBucket: '...',
-  messagingSenderId: '...',
-  appId: '...'
-};
-
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-
-6. Login Component
-------------------
-In App.jsx:
-
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from './firebase';
-import { useState } from 'react';
-
-export default function App() {
-  const [user, setUser] = useState(null);
-
-  const login = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      setUser(result.user);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  return (
-    <>
-      <h1>Firebase Auth Demo</h1>
-      {user ? (
-        <>
-          <p>Logged in as: {user.displayName}</p>
-          <button onClick={() => auth.signOut().then(() => setUser(null))}>Log out</button>
-        </>
-      ) : (
-        <button onClick={login}>Log in with Google</button>
-      )}
-    </>
-  );
-}
-
-Why This Satisfies the Assignment
 ---------------------------------
 Requirement                                 | Covered
 --------------------------------------------|---------

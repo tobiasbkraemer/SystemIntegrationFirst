@@ -49,26 +49,6 @@ How I Built the Solution:
 3. Stripe Integration:
    - In `App.jsx`, I used the Stripe SDK to redirect users to the checkout link:
 
-     import { loadStripe } from '@stripe/stripe-js';
-
-     const stripePromise = loadStripe('pk_test_...'); // my publishable key
-
-     function App() {
-       const handleClick = async () => {
-         const stripe = await stripePromise;
-         window.location.href = 'https://buy.stripe.com/test_XXXXXX';
-       };
-
-       return (
-         <div>
-           <h1>Stripe Payment Demo</h1>
-           <button onClick={handleClick}>Køb produkt</button>
-         </div>
-       );
-     }
-
-     export default App;
-
 4. Running the App:
    - Start development server:
 
