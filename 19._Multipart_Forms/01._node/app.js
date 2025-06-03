@@ -1,4 +1,10 @@
 import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 const app = express();
 
@@ -52,4 +58,29 @@ app.post("/fileform", upload.single('file'), (req, res) => {
 });
 
 const PORT = Number(process.env.PORT) || 8080;
+
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "index.html"));
+});
+
+app.get("/nested", (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "nestedForms.html"));
+});
+
+
 app.listen(PORT, () => console.log("Server is running on port", PORT));
+
+
+//-------------------GET-------------------------
+// Viser en fil direkte i browseren
+app.get('/image/:filename', (req, res) => {
+    const filePath = path.join(__dirname, 'uploads', req.params.filename);
+    res.sendFile(filePath);
+});
+
+// Trigger download af fil
+app.get('/download/:filename', (req, res) => {
+    const filePath = path.join(__dirname, 'uploads', req.params.filename);
+    res.download(filePath);
+});
