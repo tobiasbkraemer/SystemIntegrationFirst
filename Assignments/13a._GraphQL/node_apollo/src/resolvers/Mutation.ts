@@ -1,15 +1,18 @@
 import db from "../database/data.js";
-import { ApolloError } from "apollo-server";
+import { GraphQLError } from 'graphql';
 import pubsub from "../database/pubsubUtil.js";
 
 function addBook(parent: any, args: any, context: any, info: any) {
     const providedAuthorId = Number(args.authorId);
     const foundAuthor = db.authors.find((author) => author.id === providedAuthorId);
+
     if (!foundAuthor) {
-        throw new ApolloError(`Author not found with ID: ${providedAuthorId}`, 'AUTHOR_NOT_FOUND');
+        throw new GraphQLError("Author not found", {
+            extensions: { code: "AUTHOR_NOT_FOUND" }
+        });
     }
 
-    const nextId = db.books[db.books.length - 1].id + 1;
+    const nextId = db.books[db.books.length - 1]?.id + 1 || 1;
 
     const newBook = {
         id: nextId,
@@ -17,11 +20,9 @@ function addBook(parent: any, args: any, context: any, info: any) {
         releaseYear: args.releaseYear,
         authorId: providedAuthorId
     };
+
     db.books.push(newBook);
-
-
     pubsub.publish('BOOK_ADDED', { bookAdded: newBook });
-
 
     return newBook;
 }
@@ -29,17 +30,22 @@ function addBook(parent: any, args: any, context: any, info: any) {
 function updateBook(parent: any, args: any, context: any, info: any) {
     const providedBookId = Number(args.id);
     const findIndex = db.books.findIndex((book) => book.id === providedBookId);
+
     if (findIndex === -1) {
-        throw new ApolloError(`Book not found with ID: ${providedBookId}`, 'BOOK_NOT_FOUND');
+        throw new GraphQLError("Book not found", {
+            extensions: { code: "BOOK_NOT_FOUND" }
+        });
     }
 
     if (args.authorId) {
         const foundAuthor = db.authors.find((author) => author.id === Number(args.authorId));
         if (!foundAuthor) {
-            throw new ApolloError(`Author not found with ID: ${args.authorId}`, 'AUTHOR_NOT_FOUND');
+            throw new GraphQLError("Author not found", {
+                extensions: { code: "AUTHOR_NOT_FOUND" }
+            });
         }
     }
-    
+
     const foundBook = db.books[findIndex];
     const updatedBook = {
         id: foundBook.id,
@@ -47,16 +53,19 @@ function updateBook(parent: any, args: any, context: any, info: any) {
         releaseYear: args.releaseYear || foundBook.releaseYear,
         authorId: args.authorId || foundBook.authorId
     };
-    db.books[findIndex] = updatedBook;
 
+    db.books[findIndex] = updatedBook;
     return updatedBook;
 }
 
 function deleteBook(parent: any, args: any, context: any, info: any) {
     const providedBookId = Number(args.id);
     const findIndex = db.books.findIndex((book) => book.id === providedBookId);
+
     if (findIndex === -1) {
-        throw new ApolloError(`Book not found with ID: ${providedBookId}`, 'BOOK_NOT_FOUND');
+        throw new GraphQLError("Book not found", {
+            extensions: { code: "BOOK_NOT_FOUND" }
+        });
     }
 
     db.books.splice(findIndex, 1);
