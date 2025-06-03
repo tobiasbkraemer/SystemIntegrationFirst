@@ -1,0 +1,1 @@
+Jeg har arbejdet med HTTP-requests i både JavaScript og Python. I Node.js bruger jeg fetch, og i Python bruger jeg requests. Jeg kan sende GET-requests til API'er og behandle JSON-respons i begge sprog.
